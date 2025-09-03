@@ -17,15 +17,7 @@ class ChatLobby {
         return Math.random().toString(36).substr(2, 9);
     }
 
-    // Generate room code
-    generateRoomCode() {
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        let result = '';
-        for (let i = 0; i < 6; i++) {
-            result += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        return result;
-    }
+
 
     // Initialize event listeners
     initializeEventListeners() {
@@ -63,16 +55,7 @@ class ChatLobby {
             }
         });
 
-        // Join room
-        document.getElementById('join-room-btn').addEventListener('click', () => {
-            this.joinRoomByCode();
-        });
 
-        document.getElementById('room-code-input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                this.joinRoomByCode();
-            }
-        });
 
         // Chat functionality
         document.getElementById('send-message-btn').addEventListener('click', () => {
@@ -90,10 +73,7 @@ class ChatLobby {
             this.leaveRoom();
         });
 
-        // Copy room code
-        document.getElementById('copy-room-code-btn').addEventListener('click', () => {
-            this.copyRoomCode();
-        });
+
 
         // Close modals on outside click
         document.addEventListener('click', (e) => {
@@ -158,11 +138,9 @@ class ChatLobby {
         }
 
         const privacy = document.querySelector('input[name="room-privacy"]:checked').value;
-        const roomCode = this.generateRoomCode();
         const room = {
             id: this.generateId(),
             name: roomName,
-            code: roomCode,
             privacy: privacy, // 'private' or 'public'
             host: this.currentUser,
             participants: [this.currentUser],
@@ -178,25 +156,7 @@ class ChatLobby {
         this.showToast(`${privacyText.charAt(0).toUpperCase() + privacyText.slice(1)} room "${roomName}" created!`, 'success');
     }
 
-    // Room joining
-    joinRoomByCode() {
-        const roomCode = document.getElementById('room-code-input').value.trim().toUpperCase();
-        if (!roomCode) {
-            this.showToast('Please enter a room code', 'error');
-            return;
-        }
-
-        // Search both public and private rooms by code
-        const room = Array.from(this.rooms.values()).find(r => r.code === roomCode);
-        if (room) {
-            this.joinRoom(room);
-            document.getElementById('room-code-input').value = '';
-            const privacyText = room.privacy === 'private' ? 'private' : 'public';
-            this.showToast(`Joined ${privacyText} room "${room.name}"`, 'success');
-        } else {
-            this.showToast('Room not found. Please check the room code.', 'error');
-        }
-    }
+    // Room joining - now only through direct room selection
 
     joinRoom(room) {
         // Add user to room if not already present
@@ -265,7 +225,6 @@ class ChatLobby {
                 <div class="room-header">
                     <div>
                         <div class="room-name">${this.escapeHtml(room.name)}</div>
-                        <div class="room-code">#${room.code}</div>
                         <div class="room-privacy ${room.privacy}">
                             <i class="fas fa-${room.privacy === 'private' ? 'lock' : 'globe'}"></i>
                             ${room.privacy === 'private' ? 'Private' : 'Public'} Room
@@ -288,7 +247,6 @@ class ChatLobby {
         if (!this.currentRoom) return;
 
         document.getElementById('room-name').textContent = this.currentRoom.name;
-        document.getElementById('room-code-display').textContent = `#${this.currentRoom.code}`;
         document.getElementById('participant-count').textContent = 
             `${this.currentRoom.participants.length} participant${this.currentRoom.participants.length !== 1 ? 's' : ''}`;
             
@@ -371,15 +329,6 @@ class ChatLobby {
     // For now, messages are only stored locally
 
     // Utility functions
-    copyRoomCode() {
-        if (this.currentRoom) {
-            navigator.clipboard.writeText(this.currentRoom.code).then(() => {
-                this.showToast('Room code copied to clipboard!', 'success');
-            }).catch(() => {
-                this.showToast('Failed to copy room code', 'error');
-            });
-        }
-    }
 
     escapeHtml(text) {
         const div = document.createElement('div');
