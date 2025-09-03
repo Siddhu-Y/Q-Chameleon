@@ -108,6 +108,31 @@
             <div class="modal-content">
                 <h3>Create New Room</h3>
                 <input type="text" id="new-room-name" placeholder="Room name" maxlength="30">
+                
+                <div class="privacy-options">
+                    <h4>Room Privacy</h4>
+                    <div class="privacy-option">
+                        <input type="radio" id="private-room" name="room-privacy" value="private" checked>
+                        <label for="private-room">
+                            <i class="fas fa-lock"></i>
+                            <div>
+                                <strong>Private Room</strong>
+                                <span>Only people with the room code can join</span>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="privacy-option">
+                        <input type="radio" id="public-room" name="room-privacy" value="public">
+                        <label for="public-room">
+                            <i class="fas fa-globe"></i>
+                            <div>
+                                <strong>Public Room</strong>
+                                <span>Visible in lobby, anyone can join</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                
                 <div class="modal-actions">
                     <button id="confirm-create-room-btn" class="btn-primary">Create Room</button>
                     <button id="cancel-create-room-btn" class="btn-secondary">Cancel</button>

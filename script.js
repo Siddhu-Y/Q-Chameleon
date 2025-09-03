@@ -157,11 +157,13 @@ class ChatLobby {
             return;
         }
 
+        const privacy = document.querySelector('input[name="room-privacy"]:checked').value;
         const roomCode = this.generateRoomCode();
         const room = {
             id: this.generateId(),
             name: roomName,
             code: roomCode,
+            privacy: privacy, // 'private' or 'public'
             host: this.currentUser,
             participants: [this.currentUser],
             messages: [],
@@ -171,7 +173,9 @@ class ChatLobby {
         this.rooms.set(room.id, room);
         this.hideCreateRoomModal();
         this.joinRoom(room);
-        this.showToast(`Room "${roomName}" created!`, 'success');
+        
+        const privacyText = privacy === 'private' ? 'private' : 'public';
+        this.showToast(`${privacyText.charAt(0).toUpperCase() + privacyText.slice(1)} room "${roomName}" created!`, 'success');
     }
 
     // Room joining
@@ -182,10 +186,13 @@ class ChatLobby {
             return;
         }
 
+        // Search both public and private rooms by code
         const room = Array.from(this.rooms.values()).find(r => r.code === roomCode);
         if (room) {
             this.joinRoom(room);
             document.getElementById('room-code-input').value = '';
+            const privacyText = room.privacy === 'private' ? 'private' : 'public';
+            this.showToast(`Joined ${privacyText} room "${room.name}"`, 'success');
         } else {
             this.showToast('Room not found. Please check the room code.', 'error');
         }
@@ -238,24 +245,31 @@ class ChatLobby {
     updateRoomsDisplay() {
         const roomsGrid = document.getElementById('rooms-grid');
         const rooms = Array.from(this.rooms.values());
+        
+        // Only show public rooms in the lobby
+        const publicRooms = rooms.filter(room => room.privacy === 'public');
 
-        if (rooms.length === 0) {
+        if (publicRooms.length === 0) {
             roomsGrid.innerHTML = `
                 <div class="empty-state">
                     <i class="fas fa-door-open"></i>
-                    <h3>No rooms available</h3>
+                    <h3>No public rooms available</h3>
                     <p>Create a new room to get started!</p>
                 </div>
             `;
             return;
         }
 
-        roomsGrid.innerHTML = rooms.map(room => `
+        roomsGrid.innerHTML = publicRooms.map(room => `
             <div class="room-card" onclick="chatLobby.joinRoom(chatLobby.rooms.get('${room.id}'))">
                 <div class="room-header">
                     <div>
                         <div class="room-name">${this.escapeHtml(room.name)}</div>
                         <div class="room-code">#${room.code}</div>
+                        <div class="room-privacy ${room.privacy}">
+                            <i class="fas fa-${room.privacy === 'private' ? 'lock' : 'globe'}"></i>
+                            ${room.privacy === 'private' ? 'Private' : 'Public'} Room
+                        </div>
                     </div>
                 </div>
                 <div class="room-host">
@@ -277,6 +291,21 @@ class ChatLobby {
         document.getElementById('room-code-display').textContent = `#${this.currentRoom.code}`;
         document.getElementById('participant-count').textContent = 
             `${this.currentRoom.participants.length} participant${this.currentRoom.participants.length !== 1 ? 's' : ''}`;
+            
+        // Update room privacy indicator in chat header
+        const roomInfo = document.querySelector('.room-info');
+        let privacyIndicator = roomInfo.querySelector('.room-privacy-indicator');
+        if (!privacyIndicator) {
+            privacyIndicator = document.createElement('div');
+            privacyIndicator.className = 'room-privacy-indicator';
+            roomInfo.appendChild(privacyIndicator);
+        }
+        
+        privacyIndicator.innerHTML = `
+            <i class="fas fa-${this.currentRoom.privacy === 'private' ? 'lock' : 'globe'}"></i>
+            ${this.currentRoom.privacy === 'private' ? 'Private' : 'Public'} Room
+        `;
+        privacyIndicator.className = `room-privacy-indicator ${this.currentRoom.privacy}`;
     }
 
     // Chat functionality

@@ -202,6 +202,27 @@ body {
     border-radius: 4px;
 }
 
+.room-privacy {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-top: 0.5rem;
+}
+
+.room-privacy.private {
+    color: #dc3545;
+}
+
+.room-privacy.public {
+    color: #28a745;
+}
+
+.room-privacy i {
+    font-size: 0.9rem;
+}
+
 .room-host {
     font-size: 0.9rem;
     color: #6c757d;
@@ -259,6 +280,27 @@ body {
 .participant-count {
     font-size: 0.9rem;
     color: #6c757d;
+}
+
+.room-privacy-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-top: 0.25rem;
+}
+
+.room-privacy-indicator.private {
+    color: #dc3545;
+}
+
+.room-privacy-indicator.public {
+    color: #28a745;
+}
+
+.room-privacy-indicator i {
+    font-size: 0.9rem;
 }
 
 .chat-actions {
@@ -365,6 +407,75 @@ body {
     z-index: 1000;
     align-items: center;
     justify-content: center;
+}
+
+/* Privacy Options */
+.privacy-options {
+    margin: 1.5rem 0;
+}
+
+.privacy-options h4 {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.privacy-option {
+    margin-bottom: 1rem;
+}
+
+.privacy-option input[type="radio"] {
+    display: none;
+}
+
+.privacy-option label {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #f8f9fa;
+}
+
+.privacy-option label:hover {
+    border-color: #667eea;
+    background: #f0f2ff;
+}
+
+.privacy-option input[type="radio"]:checked + label {
+    border-color: #667eea;
+    background: #e8f0fe;
+}
+
+.privacy-option label i {
+    font-size: 1.5rem;
+    color: #6c757d;
+    width: 24px;
+    text-align: center;
+}
+
+.privacy-option input[type="radio"]:checked + label i {
+    color: #667eea;
+}
+
+.privacy-option label div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.privacy-option label strong {
+    font-weight: 600;
+    color: #333;
+}
+
+.privacy-option label span {
+    font-size: 0.9rem;
+    color: #6c757d;
 }
 
 .modal.active {
